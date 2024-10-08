@@ -24,9 +24,9 @@ const googleButton = document.getElementById('googlebtn'); // Google button
 signUpButton.addEventListener('click', (e) => {
     e.preventDefault();
 
-    const studentName = document.querySelector('.input[placeholder="Enter your Name"]').value; // Get Name
-    const email = document.querySelector('.input[placeholder="Enter your Email"]').value; // Get Email
-    const password = document.querySelector('.input[placeholder="Enter your Password"]').value; // Get Password
+    const name = document.getElementById('myname').value; // Get Name
+    const email = document.getElementById('myemail').value; // Get Email
+    const password = document.getElementById('mypass').value; // Get Password
 
     // Check password strength
     if (!isPasswordStrong(password)) {

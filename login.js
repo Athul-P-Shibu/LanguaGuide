@@ -1,48 +1,46 @@
 // Import the functions you need from the SDKs you need
 import { app, database, auth } from './firebase.js';
-import { update, ref } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
+// Initialize Google Provider
 const provider = new GoogleAuthProvider();
 
-const loginbtn = document.getElementById('loginbtn'); // Select the button by its ID
-const loginForm = document.getElementById('loginForm'); // Select the form by its ID
-const googleSignIn = document.getElementById('googleSignIn'); // Select the button by its ID
+// Get references to elements by their ID
+const loginbtn = document.getElementById('signinbtn'); // The Sign In button
+const googleSignIn = document.getElementById('googlebtn'); // The Google Sign-In button
 
-
+// Handle email/password login
 loginbtn.addEventListener('click', (e) => {
-
     e.preventDefault(); // Prevent form submission
 
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
+    // Get email and password values
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-    // Perform client-side validation
+    // Validate input
     if (!email || !password) {
         alert('Please enter both email and password.');
-        return; // Exit the function if either field is empty
+        return;
     }
 
+    // Sign in with email and password
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            // Signed In
             const user = userCredential.user;
-            // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                window.location.href = '/index.html';
+                window.location.href = '/index.html'; // Redirect after login
             }, 1000);
-
         })
         .catch((error) => {
-            const errorCode = error.code;
             const errorMessage = error.message;
-
-            alert(errorMessage);
+            alert(errorMessage); // Show error message
         });
-
 });
 
+
 googleSignIn.addEventListener('click', (e) => {
+    console.log("Clicked");
+    e.preventDefault();
 
     signInWithPopup(auth, provider)
         .then((result) => {
@@ -51,17 +49,7 @@ googleSignIn.addEventListener('click', (e) => {
             const token = credential.accessToken;
             // The signed-in user info.
             const user = result.user;
-
-            // alert(user.displayName);
-
-            const dt = new Date();
-            update(ref(database, 'users/' + user.uid), {
-                email: user.email,
-                last_login: dt
-            });
-            // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                loginForm.reset();
                 window.location.href = '/index.html';
             }, 1000);
 
@@ -69,7 +57,6 @@ googleSignIn.addEventListener('click', (e) => {
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
-            alert(errorMessage);
             // The email of the user's account used.
             const email = error.customData.email;
             // The AuthCredential type that was used.
@@ -77,3 +64,4 @@ googleSignIn.addEventListener('click', (e) => {
             // ...
         });
 });
+
