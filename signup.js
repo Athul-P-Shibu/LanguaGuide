@@ -1,6 +1,5 @@
 // Imported SDKs
 import { app, database, auth } from './firebase.js';
-import { set, ref } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
 // Initialize Firebase
@@ -38,11 +37,8 @@ signUpButton.addEventListener('click', (e) => {
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
-            setUserData(user.uid, 'student', studentName, email); // Assuming role as 'student'
-
             // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                signUpForm.reset();
                 window.location.href = '/index.html';
             }, 1000);
         })
@@ -51,39 +47,29 @@ signUpButton.addEventListener('click', (e) => {
             alert(errorMessage);
         });
 });
-
-function setUserData(uid, role, username, email) {
-    const userData = {
-        role: role,
-        email: email,
-        username: username
-    };
-    // Inserting values to Realtime Database
-    set(ref(database, 'users/' + uid), userData);
-}
-
 googleButton.addEventListener('click', (e) => {
-    console.log("Clicke");
-    // const auth = getAuth();
-    // signInWithPopup(auth, provider)
-    //     .then((result) => {
-    //         // This gives you a Google Access Token. You can use it to access the Google API.
-    //         const credential = GoogleAuthProvider.credentialFromResult(result);
-    //         const token = credential.accessToken;
-    //         // The signed-in user info.
-    //         const user = result.user;
-    //         setTimeout(() => {
-    //             window.location.href = '/index.html';
-    //         }, 1000);
+    console.log("Clicked");
+    e.preventDefault();
+    // Use the already initialized auth object
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+            setTimeout(() => {
+                window.location.href = '/index.html';
+            }, 1000);
 
-    //     }).catch((error) => {
-    //         // Handle Errors here.
-    //         const errorCode = error.code;
-    //         const errorMessage = error.message;
-    //         // The email of the user's account used.
-    //         const email = error.customData.email;
-    //         // The AuthCredential type that was used.
-    //         const credential = GoogleAuthProvider.credentialFromError(error);
-    //         // ...
-    //     });
+        }).catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+        });
 });

@@ -27,14 +27,8 @@ loginbtn.addEventListener('click', (e) => {
         .then((userCredential) => {
             // Signed In
             const user = userCredential.user;
-
-            const dt = new Date();
-            update(ref(database, 'users/' + user.uid), {
-                last_login: dt
-            });
             // Wait for 1 second (1000 milliseconds) before redirecting to index.html
             setTimeout(() => {
-                loginForm.reset();
                 window.location.href = '/index.html';
             }, 1000);
 
